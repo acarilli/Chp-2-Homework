@@ -1,0 +1,116 @@
+---
+title: "Exercise 1"
+author: "Carilli"
+date: '`r format(Sys.Date(), "%Y-%B-%d")`'
+output: 
+  html_document:
+    theme: cerulean
+    highlight: tango
+    toc: true
+    toc_float: true
+    df_print: paged
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, 
+                      warning = FALSE, message = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+```{r data}
+donuts <- 
+here::here("data", "DonutDataX.csv") %>% 
+  read_csv()
+```
+# Answers {.tabset .tabset-fade .tabset-pills}
+
+We can use `glimpse()` to get information about each variable
+
+```{r glimpse}
+donuts %>% 
+  glimpse()
+```
+
+## donutsx
+
+We see vector type for each variable.  *donutsx* is a character vector and it should be a numeric vector. Let's `pull` *donutsx*
+
+```{r donutsx-1}
+donuts %>% 
+  pull(donutsx) 
+
+#  or
+
+donuts$donutsx
+```
+
+We can see the 12^th^ observation is "five" and should be 5.  So we will change the observation from "five" to 5 and coerce *donutsx* to a numeric vector.
+
+```{r donutsx-2}
+donuts$donutsx[12] <- 5
+donuts$donutsx <- as.numeric(donuts$donutsx)
+```
+
+
+## weightx
+
+We can use `DT:datatable` to look at the data.
+
+```{r weightx-1}
+donuts %>% 
+  DT::datatable()
+```
+
+
+If the problem is not immediately obvious, we could try a visualization like a boxplot
+
+```{r weightx-boxplot}
+donuts %>% 
+  ggplot(aes(y = weightx)) + 
+  geom_boxplot()
+```
+
+The error is Patty's weight is listed as 1550 pounds.  That is likely supposed to be 150.  Let's find the position of the wrong weight so we can fix it.
+
+```{r index-weight}
+which(donuts$weightx == 1550)
+```
+
+Let's fix it.
+
+```{r fix-weight}
+donuts$weightx[which(donuts$weightx == 1550)] <- 155
+
+donuts$weightx
+```
+
+## childx
+
+We saw in the table above that while Bart and Lisa are children they are coded as -1, that should be 1
+
+```{r}
+donuts$childx <- donuts$childx * (-1)
+
+donuts$childx
+```
+
+## malex
+
+
+```{r}
+donuts %>% 
+  arrange(desc(malex))
+```
+
+We see that Marge, Lisa, Patty, and Selma are coded as 1 and the men are coded as 0.  We change this in two ways, rename the variable to *femalex* or subtract *malex* from 1.
+
+```{r malex}
+donuts$malex <- 1 - donuts$malex
+
+donuts %>% 
+  arrange(desc(malex))
+```
+
+

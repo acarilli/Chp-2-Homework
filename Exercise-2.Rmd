@@ -1,0 +1,101 @@
+---
+title: "Exercise 2"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA,
+                      message = FALSE, warning = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+## Data
+
+```{r data}
+oly <- 
+  here::here("data", "olympics_hw.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+## (a)
+
+```{r part-a}
+
+oly %>% 
+  select(medals, athletes, gdp) %>% 
+  summary()
+
+oly %>% 
+  select(medals, athletes, gdp) %>% 
+  summarytools::descr()
+```
+
+## (b)
+
+```{r part-b}
+
+oly %>% 
+  select(country, year, medals, athletes, gdp) %>% 
+  slice(n = 1:5)
+
+```
+
+## (c)
+
+```{r part-c}
+n_distinct(oly$year)
+
+oly %>% 
+  group_by(year) %>% 
+  count()
+```
+
+## (d)
+
+```{r part-d}
+oly %>% 
+  ggplot(aes(x = athletes, medals)) + 
+  geom_jitter()
+```
+
+## (e)
+
+More athletes means more opportunity to win medals. The presence of an athlete is necessary to win a medal.
+
+## (f) 
+
+```{r part-f}
+oly %>% 
+  ggplot(aes(x = gdp, y = medals)) +
+  geom_jitter()
+```
+
+## (g)
+
+```{r part-g}
+oly %>% 
+  ggplot(aes(x = population, y = medals)) + 
+  geom_jitter()
+```
+
+## (h)
+
+```{r part-h}
+
+oly %>% 
+  ggplot(aes(x = temp, y = medals)) + 
+  geom_jitter()
+
+```
+

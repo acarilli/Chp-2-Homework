@@ -1,0 +1,67 @@
+---
+title: "Exercise 3"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, message = FALSE,
+                      warning = FALSE, error = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+## Data
+
+```{r data}
+hw <- 
+here::here("data", "HeightWage_MenWomenUS_HW.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+## (a)
+
+```{r part-a}
+hw %>% 
+  select(wage96, height81, height85, siblings) %>% 
+  summarytools::descr() %>% 
+  summarytools::tb()
+```
+
+## (b)
+
+```{r part-b}
+hw %>% 
+  ggplot(aes(x = height85, y = wage96)) +
+  geom_jitter() + 
+  labs(x = "Adult height (in)", y = "Hourly wages ($)")
+```
+
+## (c)
+
+```{r part-c}
+hw %>% 
+  filter(wage96 < 500) %>% 
+  ggplot(aes(x = height85, y = wage96)) +
+  geom_jitter() + 
+  labs(x = "Adult height (in)", y = "Hourly wages ($)")
+```
+
+## (d)
+
+```{r part-d}
+hw %>% 
+  ggplot(aes(x = height81, y = height85)) + 
+  geom_jitter() + 
+  geom_abline(slope = 1, color ="blue")
+```
+
