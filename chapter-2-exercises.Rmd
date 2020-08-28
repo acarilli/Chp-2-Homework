@@ -1,0 +1,291 @@
+---
+title: "Chapter 2 Exercises"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+    df_print: paged
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA,
+                      message = FALSE, warning = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+# {.tabset}
+
+## Exercise 1 {.tabset}
+
+### Data
+
+Read the data
+
+```{r ex1-data}
+donuts <- 
+here::here("data", "DonutDataX.csv") %>% 
+  read_csv()
+```
+
+We can use `glimpse()` to get information about each variable
+
+```{r glimpse}
+
+donuts %>% 
+  glimpse()
+```
+
+### donutsx
+
+We see vector type for each variable.  *donutsx* is a character vector and it should be a numeric vector. Let's `pull` *donutsx*
+
+```{r donutsx-1}
+donuts %>% 
+  pull(donutsx) 
+
+#  or
+
+donuts$donutsx
+```
+
+We can see the 12^th^ observation is "five" and should be 5.  So we will change the observation from "five" to 5 and coerce *donutsx* to a numeric vector.
+
+```{r donutsx-2}
+donuts$donutsx[12] <- 5
+donuts$donutsx <- as.numeric(donuts$donutsx)
+```
+
+
+### weightx
+
+We can use `DT:datatable` to look at the data.
+
+```{r weightx-1}
+donuts %>% 
+  DT::datatable()
+```
+
+
+If the problem is not immediately obvious, we could try a visualization like a boxplot
+
+```{r weightx-boxplot}
+donuts %>% 
+  ggplot(aes(y = weightx)) + 
+  geom_boxplot()
+```
+
+The error is Patty's weight is listed as 1550 pounds.  That is likely supposed to be 150.  Let's find the position of the wrong weight so we can fix it.
+
+```{r index-weight}
+which(donuts$weightx == 1550)
+```
+
+Let's fix it.
+
+```{r fix-weight}
+donuts$weightx[which(donuts$weightx == 1550)] <- 155
+
+donuts$weightx
+```
+
+### childx
+
+We saw in the table above that while Bart and Lisa are children they are coded as -1, that should be 1
+
+```{r}
+donuts$childx <- donuts$childx * (-1)
+
+donuts$childx
+```
+
+### malex
+
+
+```{r}
+donuts %>% 
+  arrange(desc(malex))
+```
+
+We see that Marge, Lisa, Patty, and Selma are coded as 1 and the men are coded as 0.  We change this in two ways, rename the variable to *femalex* or subtract *malex* from 1.
+
+```{r malex}
+donuts$malex <- 1 - donuts$malex
+
+donuts %>% 
+  arrange(desc(malex))
+```
+
+
+
+## Exercise 2 {.tabset}
+
+### Data 
+
+```{r data}
+oly <- 
+  here::here("data", "olympics_hw.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+### (a)
+
+```{r ex2-part-a}
+
+oly %>% 
+  select(medals, athletes, gdp) %>% 
+  summary()
+
+oly %>% 
+  select(medals, athletes, gdp) %>% 
+  summarytools::descr()
+```
+
+### (b)
+
+```{r ex2-part-b}
+
+oly %>% 
+  select(country, year, medals, athletes, gdp) %>% 
+  slice(n = 1:5)
+
+```
+
+### (c)
+
+```{r ex2-part-c}
+n_distinct(oly$year)
+
+oly %>% 
+  group_by(year) %>% 
+  count()
+```
+
+### (d)
+
+```{r ex2-part-d}
+oly %>% 
+  ggplot(aes(x = athletes, medals)) + 
+  geom_jitter()
+```
+
+### (e)
+
+More athletes means more opportunity to win medals. The presence of an athlete is necessary to win a medal.
+
+### (f) 
+
+```{r ex2-part-f}
+oly %>% 
+  ggplot(aes(x = gdp, y = medals)) +
+  geom_jitter()
+```
+
+### (g)
+
+```{r ex2-part-g}
+oly %>% 
+  ggplot(aes(x = population, y = medals)) + 
+  geom_jitter()
+```
+
+### (h)
+
+```{r ex2-part-h}
+
+oly %>% 
+  ggplot(aes(x = temp, y = medals)) + 
+  geom_jitter()
+
+```
+
+
+## Exercise 3 {.tabset}
+
+### Data
+
+```{r data-ex3}
+hw <- 
+here::here("data", "HeightWage_MenWomenUS_HW.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+### (a)
+
+```{r ex3-part-a}
+hw %>% 
+  select(wage96, height81, height85, siblings) %>% 
+  summarytools::descr() %>% 
+  summarytools::tb()
+```
+
+### (b)
+
+```{r ex3-part-b}
+hw %>% 
+  ggplot(aes(x = height85, y = wage96)) +
+  geom_jitter() + 
+  labs(x = "Adult height (in)", y = "Hourly wages ($)")
+```
+
+### (c)
+
+```{r ex3-part-c}
+hw %>% 
+  filter(wage96 < 500) %>% 
+  ggplot(aes(x = height85, y = wage96)) +
+  geom_jitter() + 
+  labs(x = "Adult height (in)", y = "Hourly wages ($)")
+```
+
+### (d)
+
+```{r ex3-part-d}
+hw %>% 
+  ggplot(aes(x = height81, y = height85)) + 
+  geom_jitter() + 
+  geom_abline(slope = 1, color ="blue")
+```
+
+
+
+## Exercise 4 {.tabset}
+
+### Data
+
+```{r ex4-data}
+anscome <- 
+here::here("data", "AnscombesQuartet.csv") %>% 
+  read_csv()
+```
+
+### (a)
+
+```{r ex4-part-a}
+anscombe %>% 
+  summarytools::descr(stats = list("mean", "sd"))
+
+anscombe %>% 
+  summarize(across(everything(), list(mean = mean, variance = var))) %>% 
+  pivot_longer(everything(),names_to = "measure", values_to = "value")
+```
+
+### (b)
+
+```{r ex4-part-b}
+anscombe %>% 
+  pivot_longer(everything(),
+   names_to = c(".value", "set"),
+   names_pattern = "(.)(.)"
+ ) %>% 
+  ggplot(aes(x = x, y = y, color = set)) + 
+  geom_point() 
+```
+
