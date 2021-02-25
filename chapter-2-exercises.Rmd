@@ -129,7 +129,7 @@ donuts %>%
 
 ```{r data}
 oly <- 
-  here::here("data", "olympics_hw.csv") %>% 
+  here::here("data", "olympics_HW.csv") %>% 
   read_csv() %>% 
   janitor::clean_names()
 ```
@@ -163,6 +163,10 @@ oly %>%
 n_distinct(oly$year)
 
 oly %>% 
+  pull(year) %>% 
+  n_distinct()
+
+oly %>% 
   group_by(year) %>% 
   count()
 ```
@@ -171,7 +175,7 @@ oly %>%
 
 ```{r ex2-part-d}
 oly %>% 
-  ggplot(aes(x = athletes, medals)) + 
+  ggplot(aes(x = athletes, y = medals)) + 
   geom_jitter()
 ```
 
@@ -214,7 +218,8 @@ oly %>%
 hw <- 
 here::here("data", "HeightWage_MenWomenUS_HW.csv") %>% 
   read_csv() %>% 
-  janitor::clean_names()
+  janitor::clean_names() %>% 
+  drop_na()
 ```
 
 ### (a)
@@ -286,6 +291,8 @@ anscombe %>%
    names_pattern = "(.)(.)"
  ) %>% 
   ggplot(aes(x = x, y = y, color = set)) + 
-  geom_point() 
+  geom_point() +
+  geom_smooth(method = "lm" , se = FALSE) +
+  facet_wrap(~ set) 
 ```
 

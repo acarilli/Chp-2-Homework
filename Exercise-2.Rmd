@@ -25,7 +25,7 @@ library(tidyverse)
 
 ```{r data}
 oly <- 
-  here::here("data", "olympics_hw.csv") %>% 
+  here::here("data", "olympics_HW.csv") %>% 
   read_csv() %>% 
   janitor::clean_names()
 ```
